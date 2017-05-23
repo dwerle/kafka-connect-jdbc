@@ -48,8 +48,8 @@ public class JdbcSourceTask extends SourceTask {
   private static final Logger log = LoggerFactory.getLogger(JdbcSourceTask.class);
 
   private Time time;
-  private JdbcSourceTaskConfig config;
-  private CachedConnectionProvider cachedConnectionProvider;
+  protected JdbcSourceTaskConfig config;
+  protected CachedConnectionProvider cachedConnectionProvider;
   private PriorityQueue<TableQuerier> tableQueue = new PriorityQueue<TableQuerier>();
   private AtomicBoolean stop;
 
@@ -145,25 +145,32 @@ public class JdbcSourceTask extends SourceTask {
       String topicPrefix = config.getString(JdbcSourceTaskConfig.TOPIC_PREFIX_CONFIG);
       boolean mapNumerics = config.getBoolean(JdbcSourceTaskConfig.NUMERIC_PRECISION_MAPPING_CONFIG);
 
-      if (mode.equals(JdbcSourceTaskConfig.MODE_BULK)) {
-        tableQueue.add(new BulkTableQuerier(queryMode, tableOrQuery, schemaPattern,
-                topicPrefix, mapNumerics));
-      } else if (mode.equals(JdbcSourceTaskConfig.MODE_INCREMENTING)) {
-        tableQueue.add(new TimestampIncrementingTableQuerier(
-            queryMode, tableOrQuery, topicPrefix, null, incrementingColumn, offset,
-                timestampDelayInterval, schemaPattern, mapNumerics));
-      } else if (mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP)) {
-        tableQueue.add(new TimestampIncrementingTableQuerier(
-            queryMode, tableOrQuery, topicPrefix, timestampColumn, null, offset,
-                timestampDelayInterval, schemaPattern, mapNumerics));
-      } else if (mode.endsWith(JdbcSourceTaskConfig.MODE_TIMESTAMP_INCREMENTING)) {
-        tableQueue.add(new TimestampIncrementingTableQuerier(
-            queryMode, tableOrQuery, topicPrefix, timestampColumn, incrementingColumn,
-                offset, timestampDelayInterval, schemaPattern, mapNumerics));
-      }
+      addTableQuerier(queryMode, mode, schemaPattern, incrementingColumn, timestampColumn, timestampDelayInterval,
+          tableOrQuery, offset, topicPrefix, mapNumerics);
     }
 
     stop = new AtomicBoolean(false);
+  }
+
+  private void addTableQuerier(TableQuerier.QueryMode queryMode, String mode, String schemaPattern, String incrementingColumn,
+      String timestampColumn, Long timestampDelayInterval, String tableOrQuery, Map<String, Object> offset,
+      String topicPrefix, boolean mapNumerics) {
+    if (mode.equals(JdbcSourceTaskConfig.MODE_BULK)) {
+      tableQueue.add(new BulkTableQuerier(queryMode, tableOrQuery, schemaPattern,
+              topicPrefix, mapNumerics));
+    } else if (mode.equals(JdbcSourceTaskConfig.MODE_INCREMENTING)) {
+      tableQueue.add(new TimestampIncrementingTableQuerier(
+          queryMode, tableOrQuery, topicPrefix, null, incrementingColumn, offset,
+              timestampDelayInterval, schemaPattern, mapNumerics));
+    } else if (mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP)) {
+      tableQueue.add(new TimestampIncrementingTableQuerier(
+          queryMode, tableOrQuery, topicPrefix, timestampColumn, null, offset,
+              timestampDelayInterval, schemaPattern, mapNumerics));
+    } else if (mode.endsWith(JdbcSourceTaskConfig.MODE_TIMESTAMP_INCREMENTING)) {
+      tableQueue.add(new TimestampIncrementingTableQuerier(
+          queryMode, tableOrQuery, topicPrefix, timestampColumn, incrementingColumn,
+              offset, timestampDelayInterval, schemaPattern, mapNumerics));
+    }
   }
 
   @Override
