@@ -52,8 +52,8 @@ public class JdbcSourceConnector extends SourceConnector {
 
   private static final long MAX_TIMEOUT = 10000L;
 
-  private Map<String, String> configProperties;
-  private JdbcSourceConnectorConfig config;
+  protected Map<String, String> configProperties;
+  protected JdbcSourceConnectorConfig config;
   private CachedConnectionProvider cachedConnectionProvider;
   private TableMonitorThread tableMonitorThread;
 
