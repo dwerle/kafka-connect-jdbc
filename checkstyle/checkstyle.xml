@@ -23,9 +23,9 @@
   <module name="FileTabCharacter"/>
 
   <!-- header -->
-  <module name="RegexpHeader">
+  <!--<module name="RegexpHeader">
     <property name="header" value="/\*\nCopyright .* Confluent Inc."/>
-  </module>
+  </module>-->
 
   <module name="TreeWalker">
 
