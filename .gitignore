@@ -6,6 +6,12 @@ target/
 .idea/
 .ipr
 
+# Eclipse data
+.checkstyle
+.classpath
+.project
+.settings/
+
 # Documentation build output
 /docs/_build
 
