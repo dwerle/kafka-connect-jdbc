@@ -89,19 +89,19 @@ public class JdbcSourceConnectorConfig extends AbstractConfig {
   public static final String MODE_TIMESTAMP_INCREMENTING = "timestamp+incrementing";
 
   public static final String INCREMENTING_COLUMN_NAME_CONFIG = "incrementing.column.name";
-  private static final String INCREMENTING_COLUMN_NAME_DOC =
+  protected static final String INCREMENTING_COLUMN_NAME_DOC =
       "The name of the strictly incrementing column to use to detect new rows. Any empty value "
       + "indicates the column should be autodetected by looking for an auto-incrementing column. "
       + "This column may not be nullable.";
   public static final String INCREMENTING_COLUMN_NAME_DEFAULT = "";
-  private static final String INCREMENTING_COLUMN_NAME_DISPLAY = "Incrementing Column Name";
+  protected static final String INCREMENTING_COLUMN_NAME_DISPLAY = "Incrementing Column Name";
 
   public static final String TIMESTAMP_COLUMN_NAME_CONFIG = "timestamp.column.name";
-  private static final String TIMESTAMP_COLUMN_NAME_DOC =
+  protected static final String TIMESTAMP_COLUMN_NAME_DOC =
       "The name of the timestamp column to use to detect new or modified rows. This column may "
       + "not be nullable.";
   public static final String TIMESTAMP_COLUMN_NAME_DEFAULT = "";
-  private static final String TIMESTAMP_COLUMN_NAME_DISPLAY = "Timestamp Column Name";
+  protected static final String TIMESTAMP_COLUMN_NAME_DISPLAY = "Timestamp Column Name";
 
   public static final String TABLE_POLL_INTERVAL_MS_CONFIG = "table.poll.interval.ms";
   private static final String TABLE_POLL_INTERVAL_MS_DOC =
@@ -150,12 +150,12 @@ public class JdbcSourceConnectorConfig extends AbstractConfig {
   private static final String TOPIC_PREFIX_DISPLAY = "Topic Prefix";
 
   public static final String VALIDATE_NON_NULL_CONFIG = "validate.non.null";
-  private static final String VALIDATE_NON_NULL_DOC =
+  protected static final String VALIDATE_NON_NULL_DOC =
       "By default, the JDBC connector will validate that all incrementing and timestamp tables have NOT NULL set for "
       + "the columns being used as their ID/timestamp. If the tables don't, JDBC connector will fail to start. Setting "
       + "this to false will disable these checks.";
   public static final boolean VALIDATE_NON_NULL_DEFAULT = true;
-  private static final String VALIDATE_NON_NULL_DISPLAY = "Validate Non Null";
+  protected static final String VALIDATE_NON_NULL_DISPLAY = "Validate Non Null";
 
   public static final String TIMESTAMP_DELAY_INTERVAL_MS_CONFIG = "timestamp.delay.interval.ms";
   private static final String TIMESTAMP_DELAY_INTERVAL_MS_DOC =

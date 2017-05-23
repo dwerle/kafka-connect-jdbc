@@ -50,7 +50,7 @@ public class JdbcSourceTask extends SourceTask {
   private Time time;
   protected JdbcSourceTaskConfig config;
   protected CachedConnectionProvider cachedConnectionProvider;
-  private PriorityQueue<TableQuerier> tableQueue = new PriorityQueue<TableQuerier>();
+  protected PriorityQueue<TableQuerier> tableQueue = new PriorityQueue<TableQuerier>();
   private AtomicBoolean stop;
 
   public JdbcSourceTask() {
