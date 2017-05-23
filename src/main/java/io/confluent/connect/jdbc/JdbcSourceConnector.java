@@ -65,7 +65,7 @@ public class JdbcSourceConnector extends SourceConnector {
   @Override
   public void start(Map<String, String> properties) throws ConnectException {
     try {
-      extractAndAsignConfig(properties);
+      extractAndAssignConfig(properties);
     } catch (ConfigException e) {
       throw new ConnectException("Couldn't start JdbcSourceConnector due to configuration "
                                  + "error", e);
@@ -106,7 +106,7 @@ public class JdbcSourceConnector extends SourceConnector {
     tableMonitorThread.start();
   }
 
-  protected void extractAndAsignConfig(Map<String, String> properties) {
+  protected void extractAndAssignConfig(Map<String, String> properties) {
     configProperties = properties;
     config = new JdbcSourceConnectorConfig(configProperties);
   }
