@@ -275,7 +275,7 @@ public class JdbcSinkConfig extends AbstractConfig {
     }
   }
 
-  public static void main(String... args) {
+  /*public static void main(String... args) {
     System.out.println(CONFIG_DEF.toEnrichedRst());
-  }
+  }*/
 }
