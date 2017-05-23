@@ -40,8 +40,8 @@ import io.confluent.connect.jdbc.util.JdbcUtils;
 import io.confluent.connect.jdbc.util.Version;
 
 /**
- * JdbcSourceTask is a Kafka Connect SourceTask implementation that reads from JDBC databases and
- * generates Kafka Connect records.
+ * JdbcSourceTask is a Kafka Connect SourceTask implementation that reads from
+ * JDBC databases and generates Kafka Connect records.
  */
 public class JdbcSourceTask extends SourceTask {
 
@@ -69,7 +69,7 @@ public class JdbcSourceTask extends SourceTask {
   @Override
   public void start(Map<String, String> properties) {
     try {
-      config = new JdbcSourceTaskConfig(properties);
+      extractAndAssignConfig(properties);
     } catch (ConfigException e) {
       throw new ConnectException("Couldn't start JdbcSourceTask due to configuration error", e);
     }
@@ -77,51 +77,44 @@ public class JdbcSourceTask extends SourceTask {
     final String dbUrl = config.getString(JdbcSourceConnectorConfig.CONNECTION_URL_CONFIG);
     final String dbUser = config.getString(JdbcSourceConnectorConfig.CONNECTION_USER_CONFIG);
     final Password dbPassword = config.getPassword(JdbcSourceConnectorConfig.CONNECTION_PASSWORD_CONFIG);
-    cachedConnectionProvider = new CachedConnectionProvider(dbUrl, dbUser, dbPassword == null ? null : dbPassword.value());
+    cachedConnectionProvider = new CachedConnectionProvider(dbUrl, dbUser,
+        dbPassword == null ? null : dbPassword.value());
 
     List<String> tables = config.getList(JdbcSourceTaskConfig.TABLES_CONFIG);
     String query = config.getString(JdbcSourceTaskConfig.QUERY_CONFIG);
     if ((tables.isEmpty() && query.isEmpty()) || (!tables.isEmpty() && !query.isEmpty())) {
       throw new ConnectException("Invalid configuration: each JdbcSourceTask must have at "
-                                        + "least one table assigned to it or one query specified");
+          + "least one table assigned to it or one query specified");
     }
-    TableQuerier.QueryMode queryMode = !query.isEmpty() ? TableQuerier.QueryMode.QUERY :
-                                       TableQuerier.QueryMode.TABLE;
-    List<String> tablesOrQuery = queryMode == TableQuerier.QueryMode.QUERY ?
-                                 Collections.singletonList(query) : tables;
+    TableQuerier.QueryMode queryMode = !query.isEmpty() ? TableQuerier.QueryMode.QUERY : TableQuerier.QueryMode.TABLE;
+    List<String> tablesOrQuery = queryMode == TableQuerier.QueryMode.QUERY ? Collections.singletonList(query) : tables;
 
     String mode = config.getString(JdbcSourceTaskConfig.MODE_CONFIG);
     Map<Map<String, String>, Map<String, Object>> offsets = null;
-    if (mode.equals(JdbcSourceTaskConfig.MODE_INCREMENTING) ||
-        mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP) ||
-        mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP_INCREMENTING)) {
+    if (mode.equals(JdbcSourceTaskConfig.MODE_INCREMENTING) || mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP)
+        || mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP_INCREMENTING)) {
       List<Map<String, String>> partitions = new ArrayList<>(tables.size());
       switch (queryMode) {
         case TABLE:
           for (String table : tables) {
-            Map<String, String> partition =
-                Collections.singletonMap(JdbcSourceConnectorConstants.TABLE_NAME_KEY, table);
+            Map<String, String> partition = Collections.singletonMap(JdbcSourceConnectorConstants.TABLE_NAME_KEY,
+                table);
             partitions.add(partition);
           }
           break;
         case QUERY:
           partitions.add(Collections.singletonMap(JdbcSourceConnectorConstants.QUERY_NAME_KEY,
-                                                  JdbcSourceConnectorConstants.QUERY_NAME_VALUE));
+              JdbcSourceConnectorConstants.QUERY_NAME_VALUE));
           break;
       }
       offsets = context.offsetStorageReader().offsets(partitions);
     }
 
-    String schemaPattern
-        = config.getString(JdbcSourceTaskConfig.SCHEMA_PATTERN_CONFIG);
-    String incrementingColumn
-        = config.getString(JdbcSourceTaskConfig.INCREMENTING_COLUMN_NAME_CONFIG);
-    String timestampColumn
-        = config.getString(JdbcSourceTaskConfig.TIMESTAMP_COLUMN_NAME_CONFIG);
-    Long timestampDelayInterval
-        = config.getLong(JdbcSourceTaskConfig.TIMESTAMP_DELAY_INTERVAL_MS_CONFIG);
-    boolean validateNonNulls
-        = config.getBoolean(JdbcSourceTaskConfig.VALIDATE_NON_NULL_CONFIG);
+    String schemaPattern = config.getString(JdbcSourceTaskConfig.SCHEMA_PATTERN_CONFIG);
+    String incrementingColumn = config.getString(JdbcSourceTaskConfig.INCREMENTING_COLUMN_NAME_CONFIG);
+    String timestampColumn = config.getString(JdbcSourceTaskConfig.TIMESTAMP_COLUMN_NAME_CONFIG);
+    Long timestampDelayInterval = config.getLong(JdbcSourceTaskConfig.TIMESTAMP_DELAY_INTERVAL_MS_CONFIG);
+    boolean validateNonNulls = config.getBoolean(JdbcSourceTaskConfig.VALIDATE_NON_NULL_CONFIG);
 
     for (String tableOrQuery : tablesOrQuery) {
       final Map<String, String> partition;
@@ -130,12 +123,11 @@ public class JdbcSourceTask extends SourceTask {
           if (validateNonNulls) {
             validateNonNullable(mode, schemaPattern, tableOrQuery, incrementingColumn, timestampColumn);
           }
-          partition = Collections.singletonMap(
-              JdbcSourceConnectorConstants.TABLE_NAME_KEY, tableOrQuery);
+          partition = Collections.singletonMap(JdbcSourceConnectorConstants.TABLE_NAME_KEY, tableOrQuery);
           break;
         case QUERY:
           partition = Collections.singletonMap(JdbcSourceConnectorConstants.QUERY_NAME_KEY,
-                                               JdbcSourceConnectorConstants.QUERY_NAME_VALUE);
+              JdbcSourceConnectorConstants.QUERY_NAME_VALUE);
           break;
         default:
           throw new ConnectException("Unexpected query mode: " + queryMode);
@@ -152,24 +144,24 @@ public class JdbcSourceTask extends SourceTask {
     stop = new AtomicBoolean(false);
   }
 
-  protected void addTableQuerier(TableQuerier.QueryMode queryMode, String mode, String schemaPattern, String incrementingColumn,
-      String timestampColumn, Long timestampDelayInterval, String tableOrQuery, Map<String, Object> offset,
-      String topicPrefix, boolean mapNumerics) {
+  protected void extractAndAssignConfig(Map<String, String> properties) throws ConfigException {
+    config = new JdbcSourceTaskConfig(properties);
+  }
+
+  protected void addTableQuerier(TableQuerier.QueryMode queryMode, String mode, String schemaPattern,
+      String incrementingColumn, String timestampColumn, Long timestampDelayInterval, String tableOrQuery,
+      Map<String, Object> offset, String topicPrefix, boolean mapNumerics) {
     if (mode.equals(JdbcSourceTaskConfig.MODE_BULK)) {
-      tableQueue.add(new BulkTableQuerier(queryMode, tableOrQuery, schemaPattern,
-              topicPrefix, mapNumerics));
+      tableQueue.add(new BulkTableQuerier(queryMode, tableOrQuery, schemaPattern, topicPrefix, mapNumerics));
     } else if (mode.equals(JdbcSourceTaskConfig.MODE_INCREMENTING)) {
-      tableQueue.add(new TimestampIncrementingTableQuerier(
-          queryMode, tableOrQuery, topicPrefix, null, incrementingColumn, offset,
-              timestampDelayInterval, schemaPattern, mapNumerics));
+      tableQueue.add(new TimestampIncrementingTableQuerier(queryMode, tableOrQuery, topicPrefix, null,
+          incrementingColumn, offset, timestampDelayInterval, schemaPattern, mapNumerics));
     } else if (mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP)) {
-      tableQueue.add(new TimestampIncrementingTableQuerier(
-          queryMode, tableOrQuery, topicPrefix, timestampColumn, null, offset,
-              timestampDelayInterval, schemaPattern, mapNumerics));
+      tableQueue.add(new TimestampIncrementingTableQuerier(queryMode, tableOrQuery, topicPrefix, timestampColumn, null,
+          offset, timestampDelayInterval, schemaPattern, mapNumerics));
     } else if (mode.endsWith(JdbcSourceTaskConfig.MODE_TIMESTAMP_INCREMENTING)) {
-      tableQueue.add(new TimestampIncrementingTableQuerier(
-          queryMode, tableOrQuery, topicPrefix, timestampColumn, incrementingColumn,
-              offset, timestampDelayInterval, schemaPattern, mapNumerics));
+      tableQueue.add(new TimestampIncrementingTableQuerier(queryMode, tableOrQuery, topicPrefix, timestampColumn,
+          incrementingColumn, offset, timestampDelayInterval, schemaPattern, mapNumerics));
     }
   }
 
@@ -213,7 +205,8 @@ public class JdbcSourceTask extends SourceTask {
         }
 
         if (!hadNext) {
-          // If we finished processing the results from the current query, we can reset and send the querier to the tail of the queue
+          // If we finished processing the results from the current query, we
+          // can reset and send the querier to the tail of the queue
           resetAndRequeueHead(querier);
         }
 
@@ -243,29 +236,29 @@ public class JdbcSourceTask extends SourceTask {
     tableQueue.add(expectedHead);
   }
 
-  private void validateNonNullable(String incrementalMode, String schemaPattern, String table, String incrementingColumn, String timestampColumn) {
+  private void validateNonNullable(String incrementalMode, String schemaPattern, String table,
+      String incrementingColumn, String timestampColumn) {
     try {
       final Connection connection = cachedConnectionProvider.getValidConnection();
-      // Validate that requested columns for offsets are NOT NULL. Currently this is only performed
-      // for table-based copying because custom query mode doesn't allow this to be looked up
+      // Validate that requested columns for offsets are NOT NULL. Currently
+      // this is only performed
+      // for table-based copying because custom query mode doesn't allow this to
+      // be looked up
       // without a query or parsing the query since we don't have a table name.
-      if ((incrementalMode.equals(JdbcSourceConnectorConfig.MODE_INCREMENTING) ||
-           incrementalMode.equals(JdbcSourceConnectorConfig.MODE_TIMESTAMP_INCREMENTING)) &&
-          JdbcUtils.isColumnNullable(connection, schemaPattern, table, incrementingColumn)) {
-        throw new ConnectException("Cannot make incremental queries using incrementing column " +
-                                   incrementingColumn + " on " + table + " because this column is "
-                                   + "nullable.");
+      if ((incrementalMode.equals(JdbcSourceConnectorConfig.MODE_INCREMENTING)
+          || incrementalMode.equals(JdbcSourceConnectorConfig.MODE_TIMESTAMP_INCREMENTING))
+          && JdbcUtils.isColumnNullable(connection, schemaPattern, table, incrementingColumn)) {
+        throw new ConnectException("Cannot make incremental queries using incrementing column " + incrementingColumn
+            + " on " + table + " because this column is " + "nullable.");
       }
-      if ((incrementalMode.equals(JdbcSourceConnectorConfig.MODE_TIMESTAMP) ||
-           incrementalMode.equals(JdbcSourceConnectorConfig.MODE_TIMESTAMP_INCREMENTING)) &&
-          JdbcUtils.isColumnNullable(connection, schemaPattern, table, timestampColumn)) {
-        throw new ConnectException("Cannot make incremental queries using timestamp column " +
-                                   timestampColumn + " on " + table + " because this column is "
-                                   + "nullable.");
+      if ((incrementalMode.equals(JdbcSourceConnectorConfig.MODE_TIMESTAMP)
+          || incrementalMode.equals(JdbcSourceConnectorConfig.MODE_TIMESTAMP_INCREMENTING))
+          && JdbcUtils.isColumnNullable(connection, schemaPattern, table, timestampColumn)) {
+        throw new ConnectException("Cannot make incremental queries using timestamp column " + timestampColumn + " on "
+            + table + " because this column is " + "nullable.");
       }
     } catch (SQLException e) {
-      throw new ConnectException("Failed trying to validate that columns used for offsets are NOT"
-                                 + " NULL", e);
+      throw new ConnectException("Failed trying to validate that columns used for offsets are NOT" + " NULL", e);
     }
   }
 }
