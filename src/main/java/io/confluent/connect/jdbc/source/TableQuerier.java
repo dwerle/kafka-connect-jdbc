@@ -29,7 +29,7 @@ import java.sql.SQLException;
  * of queries: periodic bulk loading, incremental loads using auto incrementing IDs, incremental
  * loads using timestamps, etc.
  */
-abstract class TableQuerier implements Comparable<TableQuerier> {
+public abstract class TableQuerier implements Comparable<TableQuerier> {
   public enum QueryMode {
     TABLE, // Copying whole tables, with queries constructed automatically
     QUERY // User-specified query
