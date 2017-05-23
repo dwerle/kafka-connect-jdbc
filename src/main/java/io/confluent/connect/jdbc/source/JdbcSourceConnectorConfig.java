@@ -254,7 +254,7 @@ public class JdbcSourceConnectorConfig extends AbstractConfig {
     }
   }
 
-  private static class ModeDependentsRecommender implements Recommender {
+  protected static class ModeDependentsRecommender implements Recommender {
 
     @Override
     public List<Object> validValues(String name, Map<String, Object> config) {
