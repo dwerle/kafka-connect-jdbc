@@ -152,7 +152,7 @@ public class JdbcSourceTask extends SourceTask {
     stop = new AtomicBoolean(false);
   }
 
-  private void addTableQuerier(TableQuerier.QueryMode queryMode, String mode, String schemaPattern, String incrementingColumn,
+  protected void addTableQuerier(TableQuerier.QueryMode queryMode, String mode, String schemaPattern, String incrementingColumn,
       String timestampColumn, Long timestampDelayInterval, String tableOrQuery, Map<String, Object> offset,
       String topicPrefix, boolean mapNumerics) {
     if (mode.equals(JdbcSourceTaskConfig.MODE_BULK)) {
