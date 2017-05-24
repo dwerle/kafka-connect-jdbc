@@ -1,8 +1,10 @@
 package io.confluent.connect.jdbc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -11,9 +13,12 @@ import java.util.stream.Stream;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
+import org.apache.kafka.connect.util.ConnectorUtils;
 
 import io.confluent.connect.jdbc.source.JdbcDenormalizingSourceConnectorConfig;
 import io.confluent.connect.jdbc.source.JdbcDenormalizingSourceTask;
+import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
+import io.confluent.connect.jdbc.util.StringUtils;
 
 public class JdbcDenormalizingSourceConnector extends JdbcSourceConnector {
   @Override
@@ -65,5 +70,19 @@ public class JdbcDenormalizingSourceConnector extends JdbcSourceConnector {
   @Override
   public ConfigDef config() {
     return JdbcDenormalizingSourceConnectorConfig.CONFIG_DEF;
+  }
+
+  @Override
+  public List<Map<String, String>> taskConfigs(int maxTasks) {
+    List<String> currentTables = tableMonitorThread.tables();
+    int numGroups = Math.min(currentTables.size(), maxTasks);
+    List<List<String>> tablesGrouped = ConnectorUtils.groupPartitions(currentTables, numGroups);
+    List<Map<String, String>> taskConfigs = new ArrayList<>(tablesGrouped.size());
+    for (List<String> taskTables : tablesGrouped) {
+      Map<String, String> taskProps = new HashMap<>(configProperties);
+      taskProps.put(JdbcSourceTaskConfig.TABLES_CONFIG, StringUtils.join(taskTables, ","));
+      taskConfigs.add(taskProps);
+    }
+    return taskConfigs;
   }
 }

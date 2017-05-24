@@ -34,8 +34,8 @@ import org.apache.kafka.connect.util.ConnectorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.confluent.connect.jdbc.source.JdbcDenormalizingSourceTask;
 import io.confluent.connect.jdbc.source.JdbcSourceConnectorConfig;
+import io.confluent.connect.jdbc.source.JdbcSourceTask;
 import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
 import io.confluent.connect.jdbc.source.TableMonitorThread;
 import io.confluent.connect.jdbc.util.CachedConnectionProvider;
@@ -55,7 +55,7 @@ public class JdbcSourceConnector extends SourceConnector {
   protected Map<String, String> configProperties;
   protected JdbcSourceConnectorConfig config;
   private CachedConnectionProvider cachedConnectionProvider;
-  private TableMonitorThread tableMonitorThread;
+  protected TableMonitorThread tableMonitorThread;
 
   @Override
   public String version() {
@@ -113,7 +113,7 @@ public class JdbcSourceConnector extends SourceConnector {
 
   @Override
   public Class<? extends Task> taskClass() {
-    return JdbcDenormalizingSourceTask.class;
+    return JdbcSourceTask.class;
   }
 
   @Override

@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.common.config.ConfigDef.ConfigKey;
 import org.apache.kafka.common.config.ConfigDef.Importance;
 import org.apache.kafka.common.config.ConfigDef.Recommender;
 import org.apache.kafka.common.config.ConfigDef.Type;
 import org.apache.kafka.common.config.ConfigDef.Width;
+import org.apache.kafka.common.config.ConfigException;
 
 public class JdbcDenormalizingSourceConnectorConfig extends JdbcSourceConnectorConfig {
   public JdbcDenormalizingSourceConnectorConfig(Map<String, String> props) {
@@ -18,6 +18,10 @@ public class JdbcDenormalizingSourceConnectorConfig extends JdbcSourceConnectorC
     String mode = getString(JdbcSourceConnectorConfig.MODE_CONFIG);
     if (mode.equals(JdbcSourceConnectorConfig.MODE_UNSPECIFIED))
       throw new ConfigException("Query mode must be specified");
+  }
+
+  protected JdbcDenormalizingSourceConnectorConfig(ConfigDef subclassConfigDef, Map<String, String> props) {
+    super(subclassConfigDef, props);
   }
 
   public static final String MODE_DENORMALIZE = "denormalize";
@@ -45,7 +49,7 @@ public class JdbcDenormalizingSourceConnectorConfig extends JdbcSourceConnectorC
   }
 
   public static ConfigDef baseConfigDef() {
-    ConfigDef base = JdbcSourceConnectorConfig.CONFIG_DEF;
+    ConfigDef base = JdbcSourceConnectorConfig.baseConfigDef();
     removeConfigKey(base, MODE_CONFIG);
     removeConfigKey(base, INCREMENTING_COLUMN_NAME_CONFIG);
     removeConfigKey(base, TIMESTAMP_COLUMN_NAME_CONFIG);
