@@ -24,10 +24,6 @@ public class JdbcDenormalizingSourceConnector extends JdbcSourceConnector {
   protected void extractAndAssignConfig(Map<String, String> properties) {
     fixPropertyMap(properties);
 
-    System.out.println("PROPERTIES: ");
-    for (String key : properties.keySet()) {
-      System.out.println("  " + key + " --> " + properties.get(key));
-    }
     configProperties = properties;
     config = new JdbcDenormalizingSourceConnectorConfig(configProperties);
   }

@@ -79,6 +79,8 @@ public class CachedConnectionProvider {
   }
 
   protected void onConnect(Connection connection) throws SQLException {
+    connection.setAutoCommit(false);
+    connection.setReadOnly(true);
   }
 
 }

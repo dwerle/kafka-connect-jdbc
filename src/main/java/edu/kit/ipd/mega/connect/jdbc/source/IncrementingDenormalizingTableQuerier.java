@@ -31,6 +31,8 @@ import io.confluent.connect.jdbc.util.JdbcUtils;
 public class IncrementingDenormalizingTableQuerier extends TimestampIncrementingTableQuerier {
   private static final Logger log = LoggerFactory.getLogger(IncrementingDenormalizingTableQuerier.class);
 
+  private static final int MAX_ROWS = 1000;
+  
   protected Integer currentColumnIndex = null;
   protected Integer currentMaximumColumnIndex = null;
   
@@ -61,7 +63,9 @@ public class IncrementingDenormalizingTableQuerier extends TimestampIncrementing
 
     StringBuilder builder = new StringBuilder();
 
-    builder.append("SELECT * FROM ");
+    builder.append("SELECT TOP(");
+    builder.append(MAX_ROWS);
+    builder.append(") * FROM ");
     builder.append(JdbcUtils.quoteString(name, quoteString));
 
     builder.append(" WHERE ");
@@ -70,10 +74,13 @@ public class IncrementingDenormalizingTableQuerier extends TimestampIncrementing
     builder.append(" ORDER BY ");
     builder.append(JdbcUtils.quoteString(incrementingColumn, quoteString));
     builder.append(" ASC");
-
+    
     String queryString = builder.toString();
     log.debug("{} prepared SQL query: {}", this, queryString);
     stmt = db.prepareStatement(queryString);
+    
+    stmt.setMaxRows(MAX_ROWS);
+    stmt.setFetchSize(MAX_ROWS);
   }
 
   @Override
@@ -187,7 +194,7 @@ public class IncrementingDenormalizingTableQuerier extends TimestampIncrementing
     record.put("machinename", machineName);
     record.put("sensorname", sensorName);
     record.put("value", value);
-
+    
     long incrementingOffset = offset.getIncrementingOffset();
     assert (incrementingOffset == -1 || id > incrementingOffset) || timestampColumn != null;
 
