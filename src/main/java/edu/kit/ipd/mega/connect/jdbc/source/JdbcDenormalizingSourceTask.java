@@ -1,9 +1,10 @@
-package io.confluent.connect.jdbc.source;
+package edu.kit.ipd.mega.connect.jdbc.source;
 
 import java.util.Map;
 
 import org.apache.kafka.common.config.ConfigException;
 
+import io.confluent.connect.jdbc.source.JdbcSourceTask;
 import io.confluent.connect.jdbc.source.TableQuerier.QueryMode;
 
 public class JdbcDenormalizingSourceTask extends JdbcSourceTask {

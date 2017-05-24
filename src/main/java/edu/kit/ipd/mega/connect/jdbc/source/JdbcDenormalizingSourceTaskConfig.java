@@ -1,4 +1,4 @@
-package io.confluent.connect.jdbc.source;
+package edu.kit.ipd.mega.connect.jdbc.source;
 
 import java.util.Map;
 

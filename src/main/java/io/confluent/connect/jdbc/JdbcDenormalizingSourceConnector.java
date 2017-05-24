@@ -15,8 +15,8 @@ import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.util.ConnectorUtils;
 
-import io.confluent.connect.jdbc.source.JdbcDenormalizingSourceConnectorConfig;
-import io.confluent.connect.jdbc.source.JdbcDenormalizingSourceTask;
+import edu.kit.ipd.mega.connect.jdbc.source.JdbcDenormalizingSourceConnectorConfig;
+import edu.kit.ipd.mega.connect.jdbc.source.JdbcDenormalizingSourceTask;
 import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
 import io.confluent.connect.jdbc.util.StringUtils;
 

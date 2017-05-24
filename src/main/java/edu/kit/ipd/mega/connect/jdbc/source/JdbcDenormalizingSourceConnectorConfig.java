@@ -1,4 +1,4 @@
-package io.confluent.connect.jdbc.source;
+package edu.kit.ipd.mega.connect.jdbc.source;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +11,8 @@ import org.apache.kafka.common.config.ConfigDef.Recommender;
 import org.apache.kafka.common.config.ConfigDef.Type;
 import org.apache.kafka.common.config.ConfigDef.Width;
 import org.apache.kafka.common.config.ConfigException;
+
+import io.confluent.connect.jdbc.source.JdbcSourceConnectorConfig;
 
 public class JdbcDenormalizingSourceConnectorConfig extends JdbcSourceConnectorConfig {
   public JdbcDenormalizingSourceConnectorConfig(Map<String, String> props) {
