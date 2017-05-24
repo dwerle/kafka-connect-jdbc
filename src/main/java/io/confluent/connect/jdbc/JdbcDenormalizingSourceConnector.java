@@ -1,4 +1,4 @@
-package edu.kit.ipd.mega.kafka.connect.jdbc;
+package io.confluent.connect.jdbc;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,9 +12,8 @@ import java.util.stream.Stream;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
 
-import edu.kit.ipd.mega.kafka.connect.jdbc.source.JdbcDenormalizingSourceConnectorConfig;
-import edu.kit.ipd.mega.kafka.connect.jdbc.source.JdbcDenormalizingSourceTask;
-import io.confluent.connect.jdbc.JdbcSourceConnector;
+import io.confluent.connect.jdbc.source.JdbcDenormalizingSourceConnectorConfig;
+import io.confluent.connect.jdbc.source.JdbcDenormalizingSourceTask;
 
 public class JdbcDenormalizingSourceConnector extends JdbcSourceConnector {
   @Override

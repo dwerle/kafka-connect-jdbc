@@ -1,8 +1,7 @@
-package edu.kit.ipd.mega.kafka.connect.jdbc.source;
+package io.confluent.connect.jdbc.source;
 
 import java.util.Map;
 
-import io.confluent.connect.jdbc.source.JdbcSourceTask;
 import io.confluent.connect.jdbc.source.TableQuerier.QueryMode;
 
 public class JdbcDenormalizingSourceTask extends JdbcSourceTask {

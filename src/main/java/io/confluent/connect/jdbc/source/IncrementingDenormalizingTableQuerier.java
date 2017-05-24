@@ -1,4 +1,4 @@
-package edu.kit.ipd.mega.kafka.connect.jdbc.source;
+package io.confluent.connect.jdbc.source;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,9 +23,6 @@ import org.apache.kafka.connect.source.SourceRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.confluent.connect.jdbc.source.JdbcSourceConnectorConstants;
-import io.confluent.connect.jdbc.source.TimestampIncrementingOffset;
-import io.confluent.connect.jdbc.source.TimestampIncrementingTableQuerier;
 import io.confluent.connect.jdbc.util.JdbcUtils;
 
 public class IncrementingDenormalizingTableQuerier extends TimestampIncrementingTableQuerier {

@@ -1,4 +1,4 @@
-package edu.kit.ipd.mega.kafka.connect.jdbc.source;
+package io.confluent.connect.jdbc.source;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,8 +11,6 @@ import org.apache.kafka.common.config.ConfigDef.Importance;
 import org.apache.kafka.common.config.ConfigDef.Recommender;
 import org.apache.kafka.common.config.ConfigDef.Type;
 import org.apache.kafka.common.config.ConfigDef.Width;
-
-import io.confluent.connect.jdbc.source.JdbcSourceConnectorConfig;
 
 public class JdbcDenormalizingSourceConnectorConfig extends JdbcSourceConnectorConfig {
   public JdbcDenormalizingSourceConnectorConfig(Map<String, String> props) {
@@ -54,7 +52,7 @@ public class JdbcDenormalizingSourceConnectorConfig extends JdbcSourceConnectorC
     removeConfigKey(base, VALIDATE_NON_NULL_CONFIG);
 
     return base
-        .define(MODE_CONFIG, Type.STRING, MODE_UNSPECIFIED, ConfigDef.ValidString.in(MODE_DENORMALIZE), Importance.HIGH,
+        .define(MODE_CONFIG, Type.STRING, MODE_DENORMALIZE, ConfigDef.ValidString.in(MODE_DENORMALIZE), Importance.HIGH,
             MODE_DOC, MODE_GROUP, 1, Width.MEDIUM, MODE_DISPLAY,
             Arrays.asList(INCREMENTING_COLUMN_NAME_CONFIG, TIMESTAMP_COLUMN_NAME_CONFIG, VALIDATE_NON_NULL_CONFIG))
         .define(INCREMENTING_COLUMN_NAME_CONFIG, Type.STRING, INCREMENTING_COLUMN_NAME_DEFAULT, Importance.MEDIUM,
