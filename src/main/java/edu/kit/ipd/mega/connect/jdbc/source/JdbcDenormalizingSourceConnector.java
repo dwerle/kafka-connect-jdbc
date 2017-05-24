@@ -1,4 +1,4 @@
-package io.confluent.connect.jdbc;
+package edu.kit.ipd.mega.connect.jdbc.source;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,8 +15,7 @@ import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.util.ConnectorUtils;
 
-import edu.kit.ipd.mega.connect.jdbc.source.JdbcDenormalizingSourceConnectorConfig;
-import edu.kit.ipd.mega.connect.jdbc.source.JdbcDenormalizingSourceTask;
+import io.confluent.connect.jdbc.JdbcSourceConnector;
 import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
 import io.confluent.connect.jdbc.util.StringUtils;
 
